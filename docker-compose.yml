@@ -39,7 +39,7 @@ services:
       - airflow.env
     image: apache/airflow:1.10.11
     ports:
-      - 8080:8089
+      - 8089:8080
     volumes:
       - airflow_dags:/opt/airflow/dags
       - airflow_logs:/opt/airflow/logs
