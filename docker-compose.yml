@@ -36,7 +36,7 @@ services:
       - airflow
   webserver:
     env_file:
-      - AIRFLOW.env
+      - airflow.env
     image: apache/airflow:1.10.11
     ports:
       - 8080:8089
@@ -59,7 +59,7 @@ services:
   flower:
     image: apache/airflow:1.10.11
     env_file:
-      - AIRFLOW.env
+      - airflow.env
     ports:
       - 5555:5555
     depends_on:
@@ -72,7 +72,7 @@ services:
   scheduler:
     image: apache/airflow:1.10.11
     env_file:
-      - AIRFLOW.env
+      - airflow.env
     volumes:
       - airflow_dags:/opt/airflow/dags
       - airflow_logs:/opt/airflow/logs
@@ -84,7 +84,7 @@ services:
   worker:
     image: apache/airflow:1.10.11
     env_file:
-      - AIRFLOW.env
+      - airflow.env
     volumes:
       - airflow_dags:/opt/airflow/dags
       - airflow_logs:/opt/airflow/logs
@@ -98,7 +98,7 @@ services:
   initdb:
     image: apache/airflow:1.10.11
     env_file:
-      - AIRFLOW.env
+      - airflow.env
     volumes:
       - airflow_dags:/opt/airflow/dags
       - airflow_logs:/opt/airflow/logs
