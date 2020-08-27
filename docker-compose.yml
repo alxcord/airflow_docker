@@ -15,8 +15,8 @@ services:
       - 5432:5432
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./database/data:/var/lib/postgresql/data/pgdata
-      - ./database/logs:/var/lib/postgresql/data/log
+      - airflow_postgresql_pgdata:/var/lib/postgresql/data/pgdata
+      - airflow_postgresql_log:/var/lib/postgresql/data/log
     command: >
      postgres
        -c listen_addresses=*
@@ -36,14 +36,14 @@ services:
       - airflow
   webserver:
     env_file:
-      - .env
+      - AIRFLOW.env
     image: apache/airflow:1.10.11
     ports:
       - 8080:8089
     volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      - ./files:/opt/airflow/files
+      - airflow_dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - airflow_files:/opt/airflow/files
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - postgres
@@ -59,24 +59,24 @@ services:
   flower:
     image: apache/airflow:1.10.11
     env_file:
-      - .env
+      - AIRFLOW.env
     ports:
       - 5555:5555
     depends_on:
       - redis
     volumes:
-      - ./logs:/opt/airflow/logs
+      - airflow_logs:/opt/airflow/logs
     command: flower
     networks:
       - airflow
   scheduler:
     image: apache/airflow:1.10.11
     env_file:
-      - .env
+      - AIRFLOW.env
     volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      - ./files:/opt/airflow/files
+      - airflow_dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - airflow_files:/opt/airflow/files
       - /var/run/docker.sock:/var/run/docker.sock
     command: scheduler
     networks:
@@ -84,11 +84,11 @@ services:
   worker:
     image: apache/airflow:1.10.11
     env_file:
-      - .env
+      - AIRFLOW.env
     volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      - ./files:/opt/airflow/files
+      - airflow_dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - airflow_files:/opt/airflow/files
       - /var/run/docker.sock:/var/run/docker.sock
     command: worker
     depends_on:
@@ -98,11 +98,11 @@ services:
   initdb:
     image: apache/airflow:1.10.11
     env_file:
-      - .env
+      - AIRFLOW.env
     volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      - ./files:/opt/airflow/files
+      - airflow_dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - airflow_files:/opt/airflow/files
       - /var/run/docker.sock:/var/run/docker.sock
     entrypoint: /bin/bash
     command: -c "airflow initdb"
@@ -112,4 +112,31 @@ services:
     networks:
       - airflow
 
+volumes:
+  airflow_postgresql_pgdata:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=3,addr=192.168.1.10,nolock,soft,rw"
+      device: ":/mnt/main_pool/docker-volume/airflow_postgresql_pgdata"
+  airflow_postgresql_log:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=3,addr=192.168.1.10,nolock,soft,rw"
+      device: ":/mnt/main_pool/docker-volume/airflow_postgresql_log"
+  airflow_dags:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=3,addr=192.168.1.10,nolock,soft,rw"
+      device: ":/mnt/main_pool/docker-volume/airflow_dags"
+  airflow_logs:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=3,addr=192.168.1.10,nolock,soft,rw"
+      device: ":/mnt/main_pool/docker-volume/airflow_logs"
+  airflow_files:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=3,addr=192.168.1.10,nolock,soft,rw"
+      device: ":/mnt/main_pool/docker-volume/airflow_files"
 
+  
