@@ -1,1 +1,1 @@
-docker stack deploy --compose-file docker-compose.yml Bigdata
+docker stack deploy --compose-file docker-compose.yml Airflow

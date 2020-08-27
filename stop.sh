@@ -1,1 +1,1 @@
-docker stack rm Bigdata
+docker stack rm Airflow
